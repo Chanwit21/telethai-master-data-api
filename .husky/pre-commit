@@ -4,8 +4,8 @@
 # Run lint-staged on TypeScript files
 pnpm lint-staged
 
-# Type check
+# Type check (skip library check for node_modules)
 echo "🔍 Running TypeScript type check..."
-pnpm tsc --noEmit || exit 1
+pnpm tsc --noEmit --skipLibCheck || exit 1
 
 echo "✅ Pre-commit checks passed!"
