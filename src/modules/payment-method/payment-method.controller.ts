@@ -59,7 +59,9 @@ export class PaymentMethodController {
       createdBy: data.createdBy || '00000000-0000-0000-0000-000000000001',
       updatedBy: data.updatedBy || '00000000-0000-0000-0000-000000000001',
     };
-    const domain = await this.service.create(enrichedData as CreatePaymentMethodDto);
+    const domain = await this.service.create(
+      enrichedData as CreatePaymentMethodDto,
+    );
     return this.mapper.toDto(domain);
   }
 

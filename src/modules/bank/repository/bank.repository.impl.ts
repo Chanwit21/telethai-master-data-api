@@ -20,7 +20,9 @@ export class BankRepositoryImpl extends BankRepository {
     super();
   }
 
-  async create(data: Omit<BankDomain, 'createdAt' | 'updatedAt'>): Promise<BankDomain> {
+  async create(
+    data: Omit<BankDomain, 'createdAt' | 'updatedAt'>,
+  ): Promise<BankDomain> {
     this.logger.debug(`Creating Bank: ${data.code}`);
 
     try {
@@ -60,7 +62,10 @@ export class BankRepositoryImpl extends BankRepository {
   async findByCode(code: string): Promise<BankDomain | null> {
     this.logger.debug(`Finding Bank by code: ${code}`);
 
-    const config = await this.configRepository.findByName(this.configType, code);
+    const config = await this.configRepository.findByName(
+      this.configType,
+      code,
+    );
 
     if (!config) {
       return null;
@@ -76,14 +81,18 @@ export class BankRepositoryImpl extends BankRepository {
     this.logger.debug(`Updating Bank: ${code}`);
 
     // Find the config by code to get its ID
-    const config = await this.configRepository.findByName(this.configType, code);
+    const config = await this.configRepository.findByName(
+      this.configType,
+      code,
+    );
     if (!config) {
       return null;
     }
 
     const updateData: Record<string, any> = {};
     if (data.bankNameTh !== undefined) updateData.displayName = data.bankNameTh;
-    if (data.bankNameEn !== undefined) updateData.displayNameEn = data.bankNameEn;
+    if (data.bankNameEn !== undefined)
+      updateData.displayNameEn = data.bankNameEn;
     if (data.active !== undefined) updateData.active = data.active;
     if (data.updatedBy !== undefined) updateData.updatedBy = data.updatedBy;
 
@@ -99,13 +108,16 @@ export class BankRepositoryImpl extends BankRepository {
 
   async remove(code: string): Promise<boolean> {
     this.logger.debug(`Deleting Bank: ${code}`);
-    
+
     // Find the config by code to get its ID
-    const config = await this.configRepository.findByName(this.configType, code);
+    const config = await this.configRepository.findByName(
+      this.configType,
+      code,
+    );
     if (!config) {
       return false;
     }
-    
+
     // Delete by the actual UUID ID
     return this.configRepository.remove(config.id);
   }

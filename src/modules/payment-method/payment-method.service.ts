@@ -2,7 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PaymentMethodRepository } from './repository/payment-method.repository';
 import { PaymentMethodMapper } from './mapper/payment-method.mapper';
 import { PaymentMethodDomain } from './domain/payment-method.domain';
-import { CreatePaymentMethodDto, UpdatePaymentMethodDto } from './dto/payment-method.dto';
+import {
+  CreatePaymentMethodDto,
+  UpdatePaymentMethodDto,
+} from './dto/payment-method.dto';
 
 /**
  * PaymentMethod Service

@@ -96,7 +96,8 @@ export class PaymentMethodRepositoryImpl extends PaymentMethodRepository {
     this.logger.debug(`Updating PaymentMethod: ${id}`);
 
     const updateData: Record<string, any> = {};
-    if (data.displayName !== undefined) updateData.displayName = data.displayName;
+    if (data.displayName !== undefined)
+      updateData.displayName = data.displayName;
     if (data.active !== undefined) updateData.active = data.active;
     if (data.updatedBy !== undefined) updateData.updatedBy = data.updatedBy;
 

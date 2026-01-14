@@ -14,7 +14,10 @@ export class PaymentMethodResponseDto {
   @Expose()
   code: string;
 
-  @ApiProperty({ description: 'Payment method display name', example: 'PromptPay' })
+  @ApiProperty({
+    description: 'Payment method display name',
+    example: 'PromptPay',
+  })
   @Expose()
   displayName: string;
 
@@ -47,7 +50,10 @@ export class CreatePaymentMethodDto {
   })
   code: string;
 
-  @ApiProperty({ description: 'Payment method display name', example: 'PromptPay' })
+  @ApiProperty({
+    description: 'Payment method display name',
+    example: 'PromptPay',
+  })
   displayName: string;
 
   @ApiProperty({ description: 'Is active', example: true, required: false })
