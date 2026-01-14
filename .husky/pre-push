@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Type check before pushing
 echo "🔍 Running full type check and build..."
 pnpm build || exit 1
