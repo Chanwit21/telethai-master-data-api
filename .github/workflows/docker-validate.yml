@@ -1,0 +1,36 @@
+name: Validate Docker Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  docker-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (test)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: telethai-master-data-api:test-build
+          cache-from: type=gha
+
+      - name: Test Docker image
+        run: |
+          docker run --rm \
+            -e NODE_ENV=production \
+            -e PORT=8001 \
+            telethai-master-data-api:test-build \
+            node --version
+          echo "Docker image test passed"
