@@ -83,8 +83,8 @@ export class PaymentMethodMapper extends BaseMapper<
       code: dto.code,
       displayName: dto.displayName,
       active: dto.active ?? true,
-      createdBy: dto.createdBy,
-      updatedBy: dto.updatedBy,
+      createdBy: dto.createdBy ?? '',
+      updatedBy: dto.updatedBy ?? '',
     };
   }
 

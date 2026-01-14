@@ -79,8 +79,8 @@ export class BankMapper extends BaseMapper<
       bankNameTh: dto.bankNameTh,
       bankNameEn: dto.bankNameEn ?? null,
       active: dto.active ?? true,
-      createdBy: dto.createdBy,
-      updatedBy: dto.updatedBy,
+      createdBy: dto.createdBy ?? '',
+      updatedBy: dto.updatedBy ?? '',
     };
   }
 
