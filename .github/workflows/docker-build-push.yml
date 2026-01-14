@@ -99,7 +99,7 @@ jobs:
           echo "**Version:** ${{ steps.version-info.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Commit SHA:** ${{ steps.version-info.outputs.commit-sha }}" >> $GITHUB_STEP_SUMMARY
           echo "**Build Type:** ${{ steps.version-info.outputs.tag_type }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Timestamp:** ${{ steps.version-info.outputs.build-timestamp }}" >> $GITHUB_STEP_SNAPSHOT
+          echo "**Timestamp:** ${{ steps.version-info.outputs.build-timestamp }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
           echo '${{ steps.meta.outputs.tags }}' | tr ',' '\n' | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
