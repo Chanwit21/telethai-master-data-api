@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { RedisModule } from './redis/redis.module';
 import { QueueModule } from './queue/queue.module';
-import { ProductBrandModule } from './modules/product-brand/product-brand.module';
 import { PaymentMethodModule } from './modules/payment-method/payment-method.module';
 import { BankModule } from './modules/bank/bank.module';
 
@@ -18,7 +17,6 @@ import { BankModule } from './modules/bank/bank.module';
     DatabaseModule,
     RedisModule,
     QueueModule,
-    ProductBrandModule,
     PaymentMethodModule,
     BankModule,
   ],

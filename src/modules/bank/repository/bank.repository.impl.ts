@@ -1,22 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BankEntity } from '../entity/bank.entity';
 import { BankRepository } from './bank.repository';
 import { BankMapper } from '../mapper/bank.mapper';
 import { BankDomain } from '../domain/bank.domain';
+import { ConfigRepositoryImpl } from '../../../common/repositories/config.repository.impl';
 
 /**
  * Bank Repository Implementation
- * Implements abstract repository with TypeORM
+ * Uses shared ConfigRepository for CRUD operations
  */
 @Injectable()
 export class BankRepositoryImpl extends BankRepository {
   private readonly logger = new Logger(BankRepositoryImpl.name);
+  private readonly configType = 'BANK';
 
   constructor(
-    @InjectRepository(BankEntity)
-    private readonly typeormRepository: Repository<BankEntity>,
+    private readonly configRepository: ConfigRepositoryImpl,
     private readonly mapper: BankMapper,
   ) {
     super();
@@ -26,16 +24,25 @@ export class BankRepositoryImpl extends BankRepository {
     this.logger.debug(`Creating Bank: ${data.code}`);
 
     try {
-      const savedEntity = await this.typeormRepository.save({
-        code: data.code,
-        bankNameTh: data.bankNameTh,
-        bankNameEn: data.bankNameEn ?? null,
+      const { v4: uuidv4 } = await import('uuid');
+      const id = uuidv4();
+
+      const configData = {
+        id,
+        configType: this.configType,
+        configName: data.code,
+        displayName: data.bankNameTh,
+        displayNameEn: data.bankNameEn ?? null,
+        value1: null,
+        value2: null,
+        value3: null,
         active: data.active ?? true,
         createdBy: data.createdBy,
         updatedBy: data.updatedBy,
-      } as unknown as BankEntity);
+      };
 
-      return this.mapper.toDomain(savedEntity);
+      const savedConfig = await this.configRepository.create(configData);
+      return this.mapper.toDomainFromConfig(savedConfig);
     } catch (error) {
       const err = error as Error;
       this.logger.error(`Error creating Bank: ${err.message}`, err.stack);
@@ -46,25 +53,20 @@ export class BankRepositoryImpl extends BankRepository {
   async findAll(): Promise<BankDomain[]> {
     this.logger.debug('Finding all Banks');
 
-    const entities = await this.typeormRepository.find({
-      order: { code: 'ASC' },
-    });
-
-    return entities.map((entity) => this.mapper.toDomain(entity));
+    const configs = await this.configRepository.findAll(this.configType);
+    return configs.map((config) => this.mapper.toDomainFromConfig(config));
   }
 
   async findByCode(code: string): Promise<BankDomain | null> {
     this.logger.debug(`Finding Bank by code: ${code}`);
 
-    const entity = await this.typeormRepository.findOne({
-      where: { code },
-    });
+    const config = await this.configRepository.findByName(this.configType, code);
 
-    if (!entity) {
+    if (!config) {
       return null;
     }
 
-    return this.mapper.toDomain(entity);
+    return this.mapper.toDomainFromConfig(config);
   }
 
   async update(
@@ -73,33 +75,38 @@ export class BankRepositoryImpl extends BankRepository {
   ): Promise<BankDomain | null> {
     this.logger.debug(`Updating Bank: ${code}`);
 
-    const existing = await this.typeormRepository.findOne({
-      where: { code },
-    });
-
-    if (!existing) {
+    // Find the config by code to get its ID
+    const config = await this.configRepository.findByName(this.configType, code);
+    if (!config) {
       return null;
     }
 
     const updateData: Record<string, any> = {};
-    if (data.bankNameTh !== undefined) updateData.bankNameTh = data.bankNameTh;
-    if (data.bankNameEn !== undefined) updateData.bankNameEn = data.bankNameEn;
+    if (data.bankNameTh !== undefined) updateData.displayName = data.bankNameTh;
+    if (data.bankNameEn !== undefined) updateData.displayNameEn = data.bankNameEn;
     if (data.active !== undefined) updateData.active = data.active;
     if (data.updatedBy !== undefined) updateData.updatedBy = data.updatedBy;
 
-    await this.typeormRepository.update({ code }, updateData);
+    // Update by the actual UUID ID
+    const updated = await this.configRepository.update(config.id, updateData);
 
-    const updated = await this.typeormRepository.findOne({
-      where: { code },
-    });
+    if (!updated || updated.configType !== this.configType) {
+      return null;
+    }
 
-    return updated ? this.mapper.toDomain(updated) : null;
+    return this.mapper.toDomainFromConfig(updated);
   }
 
   async remove(code: string): Promise<boolean> {
     this.logger.debug(`Deleting Bank: ${code}`);
-
-    const result = await this.typeormRepository.delete({ code });
-    return (result.affected ?? 0) > 0;
+    
+    // Find the config by code to get its ID
+    const config = await this.configRepository.findByName(this.configType, code);
+    if (!config) {
+      return false;
+    }
+    
+    // Delete by the actual UUID ID
+    return this.configRepository.remove(config.id);
   }
 }

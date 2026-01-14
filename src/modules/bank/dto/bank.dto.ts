@@ -67,6 +67,12 @@ export class CreateBankDto {
 
   @ApiProperty({ description: 'Is active', example: true, required: false })
   active?: boolean;
+
+  @ApiProperty({ description: 'Created by user ID', required: false })
+  createdBy?: string;
+
+  @ApiProperty({ description: 'Updated by user ID', required: false })
+  updatedBy?: string;
 }
 
 export class UpdateBankDto {

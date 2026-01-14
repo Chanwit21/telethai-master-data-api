@@ -53,7 +53,13 @@ export class PaymentMethodController {
     @Body() data: CreatePaymentMethodDto,
   ): Promise<PaymentMethodResponseDto> {
     this.logger.log('POST /payment-methods');
-    const domain = await this.service.create(data);
+    // Set createdBy and updatedBy from test defaults if not provided
+    const enrichedData = {
+      ...data,
+      createdBy: data.createdBy || '00000000-0000-0000-0000-000000000001',
+      updatedBy: data.updatedBy || '00000000-0000-0000-0000-000000000001',
+    };
+    const domain = await this.service.create(enrichedData as CreatePaymentMethodDto);
     return this.mapper.toDto(domain);
   }
 
